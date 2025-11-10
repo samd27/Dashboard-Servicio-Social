@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+// 1. IMPORTA LA RELACIÓN
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class User extends Authenticatable //implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -20,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'cuenta_id',
+        'api_key',
+        'nivel_usuario',
     ];
 
     /**
@@ -43,5 +49,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * 3. AÑADE LA RELACIÓN A CUENTAS (RF05-C2)
+     * Un usuario pertenece a una cuenta.
+     */
+    public function cuenta(): BelongsTo
+    {
+        return $this->belongsTo(Cuenta::class);
     }
 }
