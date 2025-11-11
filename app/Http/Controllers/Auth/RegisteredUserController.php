@@ -32,18 +32,20 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // 1. VALIDACIÓN
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nombre_cuenta' => ['required', 'string', 'max:255'],
-            'rfc' => ['required', 'string', 'max:13', 'unique:cuentas'],
+            'rfc' => ['required', 'string', 'max:13', 'unique:cuentas'], // Asegura RFC único en 'cuentas'
             'telefono' => ['required', 'string', 'max:10'],
             'email_2_opcional' => ['nullable', 'string', 'lowercase', 'email', 'max:255'],
         ]);
 
+        // 2. LÓGICA DE TRANSACCIÓN (RF05-C2)
         $user = DB::transaction(function () use ($request) {
             
+            // a. Crea la Cuenta primero
             $cuenta = Cuenta::create([
                 'nombre_cuenta' => $request->nombre_cuenta,
                 'rfc' => $request->rfc,
@@ -51,8 +53,9 @@ class RegisteredUserController extends Controller
                 'email_2_opcional' => $request->email_2_opcional,
             ]);
 
+            // b. Crea el Usuario y asígnalo a la Cuenta recién creada
             $usuario = $cuenta->users()->create([
-                'name' => $request->name,
+                'name' => $request->email, 
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'api_key' => Str::random(32),
@@ -62,6 +65,7 @@ class RegisteredUserController extends Controller
             return $usuario;
         });
 
+        // 3. El resto del código de Breeze maneja el login
         event(new Registered($user));
 
         Auth::login($user);
