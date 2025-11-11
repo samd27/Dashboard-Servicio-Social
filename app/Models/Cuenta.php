@@ -11,9 +11,6 @@ class Cuenta extends Model
     use HasFactory;
 
     /**
-     * Los atributos que se pueden asignar masivamente.
-     * (Todos los campos del RF04 de la cuenta)
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -22,10 +19,7 @@ class Cuenta extends Model
         'telefono',
         'email_2_opcional',
     ];
-
-    /**
-     * Define la relación: Una Cuenta tiene muchos Usuarios (RF05-C2)
-     */
+    
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

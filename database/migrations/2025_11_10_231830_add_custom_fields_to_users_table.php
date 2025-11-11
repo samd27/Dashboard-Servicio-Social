@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             
-            // 1. Llave foránea para conectar con 'cuentas' (RF05-C2)
+            // 1. Llave foránea para conectar con 'cuentas' 
             // La ponemos después del 'id' para orden
             $table->foreignId('cuenta_id')
                   ->after('id')
-                  ->constrained('cuentas') // Asume que la tabla 'cuentas' existe
-                  ->onDelete('cascade'); // Si se borra la cuenta, se borran sus usuarios
+                  ->constrained('cuentas') 
+                  ->onDelete('cascade');
 
-            // 2. Campos personalizados (RF05)
+            // 2. Campos personalizados
             // Los ponemos después del 'remember_token' que ya existe
             $table->string('api_key', 32)->unique()->nullable()->after('remember_token');
             $table->tinyInteger('nivel_usuario')->default(1)->after('api_key');
@@ -38,11 +38,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            // Elimina la llave foránea y la columna
-            // (El método dropConstrained hace ambas cosas)
             $table->dropConstrainedForeignId('cuenta_id');
-            
-            // Elimina las columnas que agregamos
             $table->dropColumn(['api_key', 'nivel_usuario', 'vigente']);
         });
     }

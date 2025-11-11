@@ -6,17 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
-// 1. IMPORTA LA RELACIÓN
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class User extends Authenticatable //implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -29,8 +25,6 @@ class User extends Authenticatable //implements MustVerifyEmail
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var array<int, string>
      */
     protected $hidden = [
@@ -39,8 +33,6 @@ class User extends Authenticatable //implements MustVerifyEmail
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -51,10 +43,6 @@ class User extends Authenticatable //implements MustVerifyEmail
         ];
     }
 
-    /**
-     * 3. AÑADE LA RELACIÓN A CUENTAS (RF05-C2)
-     * Un usuario pertenece a una cuenta.
-     */
     public function cuenta(): BelongsTo
     {
         return $this->belongsTo(Cuenta::class);
