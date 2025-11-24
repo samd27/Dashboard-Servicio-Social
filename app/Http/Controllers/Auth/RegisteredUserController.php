@@ -53,8 +53,8 @@ class RegisteredUserController extends Controller
         });
 
         event(new Registered($user));
-        Auth::login($user);
+        //Auth::login($user); Ya no se hace login automático tras el registro
 
-        return redirect(route('dashboard', absolute: false));
+       return redirect()->route('login')->with('status', '¡Registro exitoso! Hemos enviado los detalles a tu correo.');
     }
 }
