@@ -21,6 +21,5 @@ Como parte de tu registro, hemos adjuntado a este correo:
 
 Si tienes dudas, contáctanos.
 
-Gracias,<br>
-{{ config('app.name') }}
+Gracias.
 </x-mail::message>
