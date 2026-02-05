@@ -1,8 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight text-left ml-4">
-            Panel de Control
-        </h2>
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Panel de Control
+            </h2>
+            
+            {{-- BOTONES DE NAVEGACIÓN --}}
+            <div class="flex items-center gap-4">
+                {{-- 1. Ir a la página principal --}}
+                <a href="{{ url('/') }}" class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                    ← Ir al Inicio
+                </a>
+
+                {{-- 2. Cerrar Sesión --}}
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="text-sm font-bold text-red-600 hover:text-red-800 border border-red-200 bg-red-50 px-3 py-1 rounded transition shadow-sm hover:shadow">
+                        Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
     </x-slot>
 
     <script src="https://cdn.tiny.cloud/1/9ej5ywjfi1v3c7m4p84qq132v8tilc9igp509qq70mqjjj9u/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
@@ -14,6 +32,7 @@
             menubar: false,
             plugins: 'code image media link lists table preview',
             toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link',
+            extended_valid_elements : "iframe[src|frameborder|style|scrolling|class|width|height|name|align|allowfullscreen],script[src|type],div[*],p[*],span[*]",
             automatic_uploads: true,
             file_picker_types: 'image',
         });
@@ -28,7 +47,7 @@
                 </div>
             @endif
 
-            {{-- GRID PRINCIPAL: 2 COLUMNAS (Izquierda: Config, Derecha: Noticia) --}}
+            {{-- GRID PRINCIPAL: 2 COLUMNAS (Recuperado) --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {{-- COLUMNA IZQUIERDA: CONFIGURACIÓN --}}
@@ -62,7 +81,7 @@
 
                         <div class="flex justify-end">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
-                                Guardar Config
+                                Guardar Configuración
                             </button>
                         </div>
                     </form>
@@ -99,7 +118,7 @@
 
             </div>
 
-            {{-- HISTORIAL (OCUPA TODO EL ANCHO ABAJO) --}}
+            {{-- HISTORIAL DE NOTICIAS --}}
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <h4 class="font-bold mb-4">Historial de Noticias</h4>
                 <div class="overflow-x-auto">

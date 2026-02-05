@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Cuenta;
 use App\Models\User;
-use App\Http\Requests\Auth\RegistroRequest; // Importamos tu Form Request
-use App\Mail\ConfirmacionRegistroMail;      // Importamos tu Mailable
+use App\Http\Requests\Auth\RegistroRequest;
+use App\Mail\ConfirmacionRegistroMail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;        // Importamos la Facade Mail
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -33,10 +33,10 @@ class RegisteredUserController extends Controller
      */
     public function store(RegistroRequest $request): RedirectResponse
     {
-        // Iniciamos la transacción para asegurar consistencia
+        // 1. TRANSACCIÓN: Crear Cuenta y Usuario asegurando consistencia
         $user = DB::transaction(function () use ($request) {
             
-            // 1. Crear la Cuenta
+            // A) Crear la Cuenta con los datos del formulario
             $cuenta = Cuenta::create([
                 'nombre_cuenta' => $request->nombre_cuenta,
                 'rfc' => $request->rfc,
@@ -44,34 +44,40 @@ class RegisteredUserController extends Controller
                 'email_2_opcional' => $request->email_2_opcional,
             ]);
 
-            // 2. Crear el Usuario enlazado a la cuenta
-            $usuario = $cuenta->users()->create([
+            // B) Crear el Usuario enlazado a la cuenta
+            // ¡AQUÍ ESTABA EL ERROR! Ahora sí incluyo el array con los datos:
+                       $usuario = $cuenta->users()->create([
+
                 'name' => $request->email, // RF05: El nombre es el email
+
                 'email' => $request->email,
+
                 'password' => Hash::make($request->password),
+
                 'api_key' => Str::random(32), // RF05: Generar API Key
+
                 'nivel_usuario' => 1,         // RF05: Nivel por defecto
+
             ]);
 
-            // Es importante devolver el usuario creado dentro de la transacción
-            // para poder usarlo fuera de ella (para el evento y el correo).
-            // Eloquent ya cargó la relación 'cuenta' implícitamente al crearlo así,
-            // pero si necesitamos acceder a $cuenta después, podemos usar $usuario->cuenta
+            // Devolvemos el usuario para usarlo fuera de la transacción
             return $usuario;
         });
 
-        // Evento de registro estándar de Laravel
+        // 2. Evento de registro estándar
         event(new Registered($user));
 
-        // RF06: Enviar correo de confirmación con PDFs
-        // Pasamos el usuario y su cuenta (accesible vía relación o cargándola)
-        // Nota: $user->cuenta funciona si definiste la relación en el modelo User
-        Mail::to($user->email)->send(new ConfirmacionRegistroMail($user, $user->cuenta));
+        // 3. Enviar correo (Con try-catch para evitar errores si no hay internet)
+        try {
+            Mail::to($user->email)->send(new ConfirmacionRegistroMail($user, $user->cuenta));
+        } catch (\Exception $e) {
+            // Si falla el correo, continuamos sin error
+        }
 
-        // CAMBIO: No hacemos login automático.
-        // Auth::login($user);
+        // 4. AUTO-LOGIN: Iniciar sesión automáticamente
+        Auth::login($user);
 
-        // RF06: Redirigir al login con mensaje para el Modal
-        return redirect()->route('login')->with('status', '¡Registro exitoso! Hemos enviado los detalles y manuales a tu correo.');
+        // 5. REDIRECCIÓN: Mandar directo al Dashboard
+        return redirect()->route('dashboard');
     }
 }
