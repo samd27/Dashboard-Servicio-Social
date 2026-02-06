@@ -4,97 +4,112 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // Importante para subir imágenes
+use Illuminate\Support\Facades\Storage; //Guardar imagenes
+use Illuminate\Support\Facades\Hash; //Hasheo de contraseñas
 use App\Models\SiteConfig;
 use App\Models\News;
+use App\Models\User;
 
 class AdminController extends Controller
 {
-    // Muestra el Dashboard
     public function index()
     {
         $user = Auth::user();
 
-        // --- OPCIÓN A: BLOQUEO AMIGABLE ---
-        // Si el usuario NO es Administrador (Nivel 0), lo mandamos al inicio.
+        // Bloqueo de seguridad para no Admins
         if ($user->nivel_usuario !== 0) {
             return redirect('/');
         }
 
-        // 1. Cargar Configuración (O crear una vacía si no existe)
-        $config = SiteConfig::first();
-        if (!$config) {
-            $config = new SiteConfig();
-        }
-
-        // 2. Cargar Noticias (De la más nueva a la más vieja)
+        $config = SiteConfig::first() ?? new SiteConfig();
         $news = News::latest()->get();
 
-        // 3. Mostrar la vista (Como ya filtramos arriba, solo el Admin llega aquí)
-        // Recordamos que tu archivo 'dashboard' es el que tiene los formularios
-        return view('dashboard', compact('config', 'news'));
+        // --- NUEVO: Traer a todos los usuarios MENOS a mí mismo (el admin) ---
+        $users = User::where('id', '!=', $user->id)->get();
+
+        // Enviamos 'users' a la vista
+        return view('dashboard', compact('config', 'news', 'users'));
     }
 
-    // --- AQUÍ ESTABA EL PROBLEMA (Esta es la función real para guardar) ---
     public function updateConfig(Request $request)
     {
-        // 1. Buscar la configuración
-        $config = SiteConfig::first();
-        if (!$config) {
-            $config = new SiteConfig();
-        }
-
-        // 2. Guardar los textos (Conectamos los 'name' de tu HTML con la Base de Datos)
+        $config = SiteConfig::first() ?? new SiteConfig();
         $config->titulo_sitio = $request->input('site_title');
 
-        // OJO: En tu HTML se llama 'footer_content', en la BD le pusimos 'footer_html'
         if ($request->has('footer_content')) {
             $config->footer_html = $request->input('footer_content');
         }
 
-        // 3. Subir el Logo (Si seleccionaron uno nuevo)
         if ($request->hasFile('logo')) {
-            // Borramos el logo viejo si existe para no llenar el disco
-            if ($config->logo_path) {
-                Storage::disk('public')->delete($config->logo_path);
-            }
-
-            // Guardamos el nuevo
-            $path = $request->file('logo')->store('logos', 'public');
-            $config->logo_path = $path;
+            if ($config->logo_path) Storage::disk('public')->delete($config->logo_path);
+            $config->logo_path = $request->file('logo')->store('logos', 'public');
         }
 
-        // 4. Guardar cambios en MySQL
         $config->save();
-
-        // 5. Redirigir con mensaje de éxito (Ya no dice Simulado)
-        return back()->with('status', '¡Configuración guardada correctamente!');
+        return back()->with('status', 'Configuración actualizada.');
     }
 
-    // Guardar Nueva Noticia
     public function storeNews(Request $request)
     {
-        // Validamos que al menos tenga título
-        $request->validate([
-            'title' => 'required|max:255',
-        ]);
+        $request->validate(['title' => 'required|max:255']);
 
         $news = new News();
         $news->title = $request->input('title');
-        $news->content = $request->input('content'); // TinyMCE
+        $news->content = $request->input('content');
         $news->video_url = $request->input('video_url');
-
         $news->save();
 
-        return back()->with('status', '¡Noticia publicada con éxito!');
+        return back()->with('status', 'Noticia publicada.');
     }
 
-    // Borrar Noticia
     public function deleteNews($id)
     {
-        $news = News::findOrFail($id);
-        $news->delete();
-
+        News::findOrFail($id)->delete();
         return back()->with('status', 'Noticia eliminada.');
+    }
+
+    // --- NUEVAS FUNCIONES DE GESTIÓN DE USUARIOS ---
+
+    // 1. Crear Nuevo Usuario
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'nivel_usuario' => 'required|integer|in:0,1,2', // 0:Admin, 1:Distrib, 2:Cliente
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'nivel_usuario' => $request->nivel_usuario,
+            'vigente' => true, // Nacen activos
+        ]);
+
+        return back()->with('status', 'Usuario registrado correctamente.');
+    }
+
+    // 2. Activar / Desactivar (El botón de poder)
+    public function toggleUserStatus($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Invertimos el valor (Si es 1 pasa a 0, si es 0 pasa a 1)
+        $user->vigente = !$user->vigente;
+        $user->save();
+
+        $status = $user->vigente ? 'activado' : 'desactivado';
+        return back()->with('status', "El usuario ha sido $status.");
+    }
+
+    // 3. Eliminar usuario permanentemente
+    public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return back()->with('status', 'Usuario eliminado permanentemente.');
     }
 }
