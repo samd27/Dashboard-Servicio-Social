@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Models\SiteConfig;
 use App\Models\News;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/config', [AdminController::class, 'updateConfig'])->name('admin.config.update');
         Route::post('/admin/news', [AdminController::class, 'storeNews'])->name('admin.news.store');
         Route::delete('/admin/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
+        Route::get('verify-2fa', [TwoFactorController::class, 'index'])->name('verify.2fa.index');
+        Route::post('verify-2fa', [TwoFactorController::class, 'store'])->name('verify.2fa.store');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -28,4 +31,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
