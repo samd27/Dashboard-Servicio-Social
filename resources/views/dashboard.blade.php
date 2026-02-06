@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Panel de Control
             </h2>
-            
+
             {{-- BOTONES DE NAVEGACIÓN --}}
             <div class="flex items-center gap-4">
                 {{-- 1. Ir a la página principal --}}
@@ -24,11 +24,11 @@
     </x-slot>
 
     <script src="https://cdn.tiny.cloud/1/9ej5ywjfi1v3c7m4p84qq132v8tilc9igp509qq70mqjjj9u/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    
+
     <script>
         tinymce.init({
-            selector: 'textarea.rich-editor', 
-            height: 250, 
+            selector: 'textarea.rich-editor',
+            height: 250,
             menubar: false,
             plugins: 'code image media link lists table preview',
             toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link',
@@ -49,14 +49,14 @@
 
             {{-- GRID PRINCIPAL: 2 COLUMNAS (Recuperado) --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
+
                 {{-- COLUMNA IZQUIERDA: CONFIGURACIÓN --}}
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 h-fit">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Configuración General (RF03)</h3>
-                    
+
                     <form action="{{ route('admin.config.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        
+
                         <div class="mb-4">
                             <label class="block text-gray-700 font-bold mb-2">Título del Sitio</label>
                             <input type="text" name="site_title" value="{{ $config->titulo_sitio }}" class="w-full border-gray-300 rounded shadow-sm">
@@ -70,7 +70,7 @@
                                         <img src="{{ asset('storage/'. $config->logo_path) }}" class="h-12">
                                     </div>
                                 @endif
-                                <input type="file" name="logo" class="text-xs text-gray-500 file:mr-2 file:py-2 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <input type="file" accept="image/*" name="logo" class="text-xs text-gray-500 file:mr-2 file:py-2 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             </div>
                         </div>
 
@@ -90,7 +90,7 @@
                 {{-- COLUMNA DERECHA: PUBLICAR NOTICIA --}}
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 h-fit">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Publicar Nueva Noticia (RF02)</h3>
-                    
+
                     <form action="{{ route('admin.news.store') }}" method="POST">
                         @csrf
                         <div class="mb-4">
