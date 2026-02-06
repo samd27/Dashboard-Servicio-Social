@@ -15,6 +15,12 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
+        // --- OPCIÓN A: BLOQUEO AMIGABLE ---
+        // Si el usuario NO es Administrador (Nivel 0), lo mandamos al inicio.
+        if ($user->nivel_usuario !== 0) {
+            return redirect('/');
+        }
+
         // 1. Cargar Configuración (O crear una vacía si no existe)
         $config = SiteConfig::first();
         if (!$config) {
@@ -24,11 +30,8 @@ class AdminController extends Controller
         // 2. Cargar Noticias (De la más nueva a la más vieja)
         $news = News::latest()->get();
 
-        // 3. Decidir qué vista mostrar según el rol
-        if ($user->nivel_usuario!== 1) {
-            return view('admin_dashboard', compact('config', 'news'));
-        }
-
+        // 3. Mostrar la vista (Como ya filtramos arriba, solo el Admin llega aquí)
+        // Recordamos que tu archivo 'dashboard' es el que tiene los formularios
         return view('dashboard', compact('config', 'news'));
     }
 
@@ -43,7 +46,7 @@ class AdminController extends Controller
 
         // 2. Guardar los textos (Conectamos los 'name' de tu HTML con la Base de Datos)
         $config->titulo_sitio = $request->input('site_title');
-        
+
         // OJO: En tu HTML se llama 'footer_content', en la BD le pusimos 'footer_html'
         if ($request->has('footer_content')) {
             $config->footer_html = $request->input('footer_content');
@@ -55,7 +58,7 @@ class AdminController extends Controller
             if ($config->logo_path) {
                 Storage::disk('public')->delete($config->logo_path);
             }
-            
+
             // Guardamos el nuevo
             $path = $request->file('logo')->store('logos', 'public');
             $config->logo_path = $path;
@@ -80,7 +83,7 @@ class AdminController extends Controller
         $news->title = $request->input('title');
         $news->content = $request->input('content'); // TinyMCE
         $news->video_url = $request->input('video_url');
-        
+
         $news->save();
 
         return back()->with('status', '¡Noticia publicada con éxito!');
