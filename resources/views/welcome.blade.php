@@ -46,7 +46,7 @@
                             <button type="submit"
                                 class="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-red-600 transition-colors"
                                 title="Cerrar Sesión">
-                                <span>Salir</span>
+                                <span>Cerrar Sesión</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
