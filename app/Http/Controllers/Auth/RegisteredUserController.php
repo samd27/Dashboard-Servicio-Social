@@ -45,7 +45,6 @@ class RegisteredUserController extends Controller
             ]);
 
             // B) Crear el Usuario enlazado a la cuenta
-            // ¡AQUÍ ESTABA EL ERROR! Ahora sí incluyo el array con los datos:
                        $usuario = $cuenta->users()->create([
 
                 'name' => $request->email, // RF05: El nombre es el email
@@ -74,10 +73,7 @@ class RegisteredUserController extends Controller
             // Si falla el correo, continuamos sin error
         }
 
-        // 4. AUTO-LOGIN: Iniciar sesión automáticamente
-        Auth::login($user);
-
-        // 5. REDIRECCIÓN: Mandar directo al Dashboard
-        return redirect()->route('dashboard');
+        // 4. REDIRECCIÓN: Mandar al Login con mensaje de éxito
+        return redirect()->route('login')->with('status', '¡Registro exitoso! Hemos enviado un correo con tus datos de acceso y documentación adjunta. Por favor, inicia sesión con tu email y contraseña.');
     }
 }

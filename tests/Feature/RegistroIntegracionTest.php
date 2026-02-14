@@ -52,7 +52,7 @@ class RegistroIntegracionTest extends TestCase
 
         // B) Verificar Redirección y Mensaje Web (RF06 - Modal)
         $response->assertRedirect(route('login'));
-        $response->assertSessionHas('status', '¡Registro exitoso! Hemos enviado los detalles y manuales a tu correo.');
+        $response->assertSessionHas('status', '¡Registro exitoso! Hemos enviado un correo con tus datos de acceso y documentación adjunta. Por favor, inicia sesión con tu email y contraseña.');
 
         // C) Verificar Envío de Correo y Adjuntos (RF06 - Email)
         // Verificamos que se haya enviado el Mailable correcto al usuario correcto

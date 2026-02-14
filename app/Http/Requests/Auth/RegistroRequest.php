@@ -13,8 +13,6 @@ class RegistroRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Lo cambiamos a 'true' para permitir que cualquiera (invitado)
-        // pueda hacer esta petición de registro.
         return true;
     }
 
