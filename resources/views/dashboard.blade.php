@@ -31,8 +31,8 @@
             height: 250, 
             menubar: false,
             plugins: 'code image media link lists table preview',
-            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link',
-            extended_valid_elements : "iframe[src|frameborder|style|scrolling|class|width|height|name|align|allowfullscreen],script[src|type],div[*],p[*],span[*]",
+// Agregamos 'code', 'image', 'media' y 'preview' al final
+toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image media | code preview',            extended_valid_elements : "iframe[src|frameborder|style|scrolling|class|width|height|name|align|allowfullscreen],script[src|type],div[*],p[*],span[*]",
             automatic_uploads: true,
             file_picker_types: 'image',
         });
