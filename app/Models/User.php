@@ -22,6 +22,9 @@ class User extends Authenticatable
         'cuenta_id',
         'api_key',
         'nivel_usuario',
+        'vigente',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
     /**

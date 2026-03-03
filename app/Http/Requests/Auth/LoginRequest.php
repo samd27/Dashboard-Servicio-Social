@@ -41,11 +41,26 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        // 1. Verificar credenciales (Email y Contraseña)
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+
+        // 2. Verificar si la cuenta está VIGENTE (Lógica agregada)
+        $user = Auth::user();
+
+        if ($user->vigente == 0) {
+            // Si no es vigente, lo sacamos inmediatamente
+            Auth::guard('web')->logout();
+
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Esta cuenta ha sido desactivada. Contacte al administrador.',
             ]);
         }
 

@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
     {
         // 1. TRANSACCIÓN: Crear Cuenta y Usuario asegurando consistencia
         $user = DB::transaction(function () use ($request) {
-            
+
             // A) Crear la Cuenta con los datos del formulario
             $cuenta = Cuenta::create([
                 'nombre_cuenta' => $request->nombre_cuenta,
@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
             // B) Crear el Usuario enlazado a la cuenta
                        $usuario = $cuenta->users()->create([
 
-                'name' => $request->email, // RF05: El nombre es el email
+                'name' => $request->nombre_cuenta, // RF05: El nombre es el email???
 
                 'email' => $request->email,
 
