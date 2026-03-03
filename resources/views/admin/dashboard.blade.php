@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Panel de Control
+                Panel de Administración General
             </h2>
 
             {{-- BOTONES DE NAVEGACIÓN --}}
@@ -22,10 +22,10 @@
                     <span>Ir al Inicio</span>
                 </a>
 
-                {{-- Separador Vertical (Opcional, para elegancia) --}}
+                {{-- Separador Vertical --}}
                 <div class="h-6 w-px bg-gray-300 mx-1"></div>
 
-                {{-- 2. Cerrar Sesión (Estilo Botón con Icono) --}}
+                {{-- 2. Cerrar Sesión --}}
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
                     <button type="submit"
@@ -42,6 +42,7 @@
         </div>
     </x-slot>
 
+    {{-- SCRIPTS DE TINYMCE PARA EL EDITOR DE TEXTO --}}
     <script src="https://cdn.tiny.cloud/1/9ej5ywjfi1v3c7m4p84qq132v8tilc9igp509qq70mqjjj9u/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
 
@@ -61,17 +62,18 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            {{-- MENSAJES DE ÉXITO GLOBALES --}}
             @if (session('status'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-                    <p>{{ session('status') }}</p>
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded shadow-sm" role="alert">
+                    <p class="font-bold">{{ session('status') }}</p>
                 </div>
             @endif
 
-            {{-- GRID PRINCIPAL: 2 COLUMNAS (Recuperado) --}}
+            {{-- GRID PRINCIPAL: CONFIGURACIÓN Y NOTICIAS --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {{-- COLUMNA IZQUIERDA: CONFIGURACIÓN --}}
-                <div class="bg-white shadow-sm sm:rounded-lg p-6 h-fit">
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 h-fit border-t-4 border-indigo-500">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Configuración General (RF03)</h3>
 
                     <form action="{{ route('admin.config.update') }}" method="POST" enctype="multipart/form-data">
@@ -103,7 +105,7 @@
 
                         <div class="flex justify-end">
                             <button type="submit"
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded shadow">
                                 Guardar Configuración
                             </button>
                         </div>
@@ -111,7 +113,7 @@
                 </div>
 
                 {{-- COLUMNA DERECHA: PUBLICAR NOTICIA --}}
-                <div class="bg-white shadow-sm sm:rounded-lg p-6 h-fit">
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 h-fit border-t-4 border-green-500">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Publicar Nueva Noticia (RF02)</h3>
 
                     <form action="{{ route('admin.news.store') }}" method="POST">
@@ -135,7 +137,7 @@
 
                         <div class="flex justify-end">
                             <button type="submit"
-                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded">
+                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow">
                                 Publicar Noticia
                             </button>
                         </div>
@@ -145,21 +147,21 @@
             </div>
 
             {{-- HISTORIAL DE NOTICIAS --}}
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <h4 class="font-bold mb-4">Historial de Noticias</h4>
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 mt-6">
+                <h4 class="font-bold mb-4 text-gray-800">Historial de Noticias</h4>
                 <div class="overflow-x-auto">
                     <table class="min-w-full leading-normal">
                         <thead>
                             <tr>
-                                <th
-                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Fecha</th>
-                                <th
-                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Título</th>
-                                <th
-                                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Acción</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Fecha
+                                </th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Título
+                                </th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Acción
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -186,13 +188,13 @@
                 </div>
             </div>
 
-            {{-- Administración de usuarios --}}
-            c<div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+            {{-- ADMINISTRACIÓN DE USUARIOS --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6 border-t-4 border-blue-500">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2">Gestión de Usuarios</h3>
 
                     <div class="bg-gray-50 p-4 rounded mb-6 border">
-                        <h4 class="font-semibold text-sm mb-2">Registrar Nuevo Usuario</h4>
+                        <h4 class="font-semibold text-sm mb-2 text-gray-700">Registrar Nuevo Usuario</h4>
 
                         <form action="{{ route('admin.users.store') }}" method="POST"
                             class="flex flex-wrap gap-2 items-end" autocomplete="off">
@@ -218,7 +220,7 @@
 
                             <div class="w-32">
                                 <label class="text-xs font-bold text-gray-600">Rol</label>
-                                <select name="nivel_usuario" class="w-full text-sm rounded border-gray-300">
+                                <select name="nivel_usuario" class="w-full text-sm rounded border-gray-300 bg-white">
                                     <option value="1">Distribuidor (1)</option>
                                     <option value="2">Cliente (2)</option>
                                     <option value="0">Admin (0)</option>
@@ -226,8 +228,8 @@
                             </div>
 
                             <button type="submit"
-                                class="bg-indigo-600 text-white text-sm font-bold py-2 px-4 rounded hover:bg-indigo-800">
-                                Crear
+                                class="bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded shadow hover:bg-blue-800 transition">
+                                Crear Usuario
                             </button>
                         </form>
                     </div>
@@ -244,44 +246,44 @@
                             </thead>
                             <tbody>
                                 @foreach ($users as $u)
-                                    <tr class="border-b hover:bg-gray-50">
+                                    <tr class="border-b hover:bg-gray-50 transition">
                                         <td class="px-6 py-4">
-                                            <div class="font-medium text-gray-900">{{ $u->name }}</div>
+                                            <div class="font-bold text-gray-900">{{ $u->name }}</div>
                                             <div class="text-xs text-gray-500">{{ $u->email }}</div>
                                         </td>
                                         <td class="px-6 py-4">
                                             @if ($u->nivel_usuario == 0)
-                                                <span class="text-purple-600 font-bold">Admin</span>
+                                                <span class="text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded">Admin</span>
                                             @elseif($u->nivel_usuario == 1)
-                                                <span class="text-blue-600 font-bold">Distribuidor</span>
+                                                <span class="text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">Distribuidor</span>
                                             @else
-                                                <span class="text-gray-600">Cliente</span>
+                                                <span class="text-gray-600 font-bold bg-gray-100 px-2 py-1 rounded">Cliente</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4">
                                             @if ($u->vigente)
                                                 <span
-                                                    class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Vigente</span>
+                                                    class="bg-green-100 text-green-800 text-xs font-bold mr-2 px-2.5 py-1 rounded-full">Vigente</span>
                                             @else
                                                 <span
-                                                    class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Baja</span>
+                                                    class="bg-red-100 text-red-800 text-xs font-bold mr-2 px-2.5 py-1 rounded-full">Baja</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 text-right flex justify-end gap-2">
+                                        <td class="px-6 py-4 text-right flex justify-end gap-3 items-center">
 
                                             <form action="{{ route('admin.users.toggle', $u->id) }}" method="POST">
                                                 @csrf @method('PATCH')
                                                 <button type="submit"
-                                                    class="text-xs font-bold px-3 py-1 rounded {{ $u->vigente ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' }}">
+                                                    class="text-xs font-bold px-3 py-1.5 rounded transition shadow-sm {{ $u->vigente ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' }}">
                                                     {{ $u->vigente ? 'Desactivar' : 'Activar' }}
                                                 </button>
                                             </form>
 
                                             <form action="{{ route('admin.users.delete', $u->id) }}" method="POST"
-                                                onsubmit="return confirm('¿Borrar usuario permanentemente?');">
+                                                onsubmit="return confirm('¿Borrar usuario permanentemente? Esta acción no se puede deshacer.');">
                                                 @csrf @method('DELETE')
                                                 <button type="submit"
-                                                    class="text-red-500 hover:text-red-700 font-bold px-2">X</button>
+                                                    class="text-red-500 hover:text-red-700 font-bold text-lg hover:bg-red-50 px-2 rounded" title="Eliminar Permanente">×</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -289,7 +291,7 @@
                             </tbody>
                         </table>
                         @if ($users->isEmpty())
-                            <p class="text-center text-gray-500 py-4">No hay otros usuarios registrados.</p>
+                            <p class="text-center text-gray-500 py-6 font-medium">No hay otros usuarios registrados en el sistema.</p>
                         @endif
                     </div>
                 </div>

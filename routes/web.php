@@ -16,7 +16,14 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('verify-2fa', [TwoFactorController::class, 'index'])->name('verify.2fa.index');
+    Route::post('verify-2fa', [TwoFactorController::class, 'store'])->name('verify.2fa.store');
+
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware('role:0')->group(function () {
         Route::post('/admin/config', [AdminController::class, 'updateConfig'])->name('admin.config.update');
@@ -25,13 +32,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
         Route::patch('/admin/users/{id}/toggle', [AdminController::class, 'toggleUserStatus'])->name('admin.users.toggle');
         Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete'); // Borrado físico
-        Route::get('verify-2fa', [TwoFactorController::class, 'index'])->name('verify.2fa.index');
-        Route::post('verify-2fa', [TwoFactorController::class, 'store'])->name('verify.2fa.store');
     });
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';

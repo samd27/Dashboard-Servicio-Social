@@ -16,19 +16,39 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        // Bloqueo de seguridad para no Admins
-        if ($user->nivel_usuario !== 0) {
-            return redirect('/');
+        // 1. RUTA PARA EL ADMINISTRADOR (Nivel 0)
+        if ($user->nivel_usuario === 0) {
+            $config = SiteConfig::first() ?? new SiteConfig();
+            $news = News::latest()->get();
+            $users = User::where('id', '!=', $user->id)->get();
+
+            // Renderiza la vista de la carpeta "admin"
+            return view('admin.dashboard', compact('config', 'news', 'users'));
         }
 
-        $config = SiteConfig::first() ?? new SiteConfig();
-        $news = News::latest()->get();
+        // 2. RUTA PARA EL DISTRIBUIDOR (Nivel 1)
+        if ($user->nivel_usuario === 1) {
+            $bi_stats = [
+                'ingresos_mes' => '$45,200 MXN',
+                'clientes_nuevos' => 12,
+                'productos_vendidos' => 340,
+                'crecimiento' => '+15%'
+            ];
 
-        // --- NUEVO: Traer a todos los usuarios MENOS a mí mismo (el admin) ---
-        $users = User::where('id', '!=', $user->id)->get();
+            // Renderiza la vista de la carpeta "distribuidor"
+            return view('distribuidor.dashboard', compact('bi_stats'));
+        }
 
-        // Enviamos 'users' a la vista
-        return view('dashboard', compact('config', 'news', 'users'));
+        // 3. RUTA PARA EL CLIENTE FINAL (Nivel 2)
+        if ($user->nivel_usuario === 2) {
+            $historial = []; // Datos futuros de compras
+
+            // Renderiza la vista de la carpeta "cliente"
+            return view('cliente.dashboard', compact('historial'));
+        }
+
+        // Por seguridad extrema, si por alguna razón no tiene nivel válido, lo sacamos.
+        return redirect('/');
     }
 
     public function updateConfig(Request $request)
